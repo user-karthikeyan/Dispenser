@@ -7,12 +7,12 @@ import time
 
 from paho.mqtt import client as mqtt_client
 
-BROKER = 's6ad6543.ala.us-east-1.emqxsl.com'
-PORT = 8883
-TOPIC = "python-mqtt/tls"
+BROKER = 'j9a01f0b.ala.dedicated.aws.emqxcloud.com'
+PORT = 1883
+TOPIC = "71762105028@cit.edu.in/morning"
 # generate client ID with pub prefix randomly
-CLIENT_ID = f'python-mqtt-tls-pub-{random.randint(0, 1000)}'
-USERNAME = 'raspberrypi'
+CLIENT_ID = f'raspberrypi-{random.randint(0, 1000)}'
+USERNAME = 'pi'
 PASSWORD = 'pi'
 FLAG_CONNECTED = 0
 
@@ -55,7 +55,6 @@ def on_disconnect(client, userdata, rc):
 
 def connect_mqtt():
     client = mqtt_client.Client(mqtt_client.CallbackAPIVersion.VERSION2 , CLIENT_ID)
-    client.tls_set(ca_certs=r"C:\Users\a_kar\Downloads\emqxsl-ca.crt")
     client.username_pw_set(USERNAME, PASSWORD)
     client.on_connect = on_connect
     client.connect(BROKER, PORT, keepalive=120)
@@ -67,14 +66,15 @@ def publish(client):
     msg_count = 0
     while not FLAG_EXIT:
         msg_dict = {
-            'msg': msg_count
+            'hour':22,
+            'minutes':6
         }
         msg = json.dumps(msg_dict)
         if not client.is_connected():
             logging.error("publish: MQTT client is not connected!")
             time.sleep(1)
             continue
-        result = client.publish(TOPIC, msg)
+        result = client.publish(TOPIC, msg, retain=True)
         # result: [0, 1]
         status = result[0]
         if status == 0:
